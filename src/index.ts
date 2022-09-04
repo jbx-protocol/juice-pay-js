@@ -14,6 +14,7 @@ function createIframe() {
 
   iframe.setAttribute("style", IFRAME_STYLE_INACTIVE);
   iframe.setAttribute("src", iframeSrc);
+  iframe.setAttribute("frameBorder", "0");
 
   return iframe;
 }
@@ -34,7 +35,6 @@ function addFrameEventListeners(iframe: HTMLIFrameElement) {
   window.addEventListener("message", (e) => {
     console.log(e.data);
     if (e.data.method === "close") {
-      console.log("closing");
       iframe.setAttribute("style", IFRAME_STYLE_INACTIVE);
     }
   });
