@@ -23,14 +23,25 @@ function createButton(iframe: HTMLIFrameElement) {
 
   button.addEventListener("click", function juiceboxButtonClick() {
     iframe.setAttribute("style", IFRAME_STYLE_ACTIVE);
+    iframe.contentWindow?.postMessage("jb-pay-widget_open", "*");
   });
 
   return button;
 }
 
+function addCloseEventListener(iframe: HTMLIFrameElement) {
+  window.addEventListener("message", (e) => {
+    if (e.data === "jb-pay-widget_close") {
+      iframe.setAttribute("style", IFRAME_STYLE_INACTIVE);
+    }
+  });
+}
+
 function mount() {
   const iframe = createIframe();
   const button = createButton(iframe);
+
+  addCloseEventListener(iframe);
 
   thisEl?.insertAdjacentElement("afterend", iframe);
   thisEl?.insertAdjacentElement("beforebegin", button);
