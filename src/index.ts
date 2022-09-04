@@ -1,4 +1,5 @@
-const thisEl = document.querySelector("script"); // TODO scope to the correct src attr
+const scriptEl = document.querySelector("script"); // TODO scope to the correct src attr
+const options = Object.assign({}, scriptEl?.dataset);
 const IFRAME_STYLE_ACTIVE =
   "z-index: 2147483647; background: rgba(0, 0, 0, 0.004); border: 0px none transparent; overflow: hidden auto; visibility: visible; margin: 0px; padding: 0px; -webkit-tap-highlight-color: transparent; position: fixed; left: 0px; top: 0px; width: 100%; height: 100%;";
 const IFRAME_STYLE_INACTIVE =
@@ -23,15 +24,17 @@ function createButton(iframe: HTMLIFrameElement) {
 
   button.addEventListener("click", function juiceboxButtonClick() {
     iframe.setAttribute("style", IFRAME_STYLE_ACTIVE);
-    iframe.contentWindow?.postMessage("jb-pay-widget_open", "*");
+    iframe.contentWindow?.postMessage({ method: "render", options }, "*");
   });
 
   return button;
 }
 
-function addCloseEventListener(iframe: HTMLIFrameElement) {
+function addFrameEventListeners(iframe: HTMLIFrameElement) {
   window.addEventListener("message", (e) => {
-    if (e.data === "jb-pay-widget_close") {
+    console.log(e.data);
+    if (e.data.method === "close") {
+      console.log("closing");
       iframe.setAttribute("style", IFRAME_STYLE_INACTIVE);
     }
   });
@@ -41,10 +44,10 @@ function mount() {
   const iframe = createIframe();
   const button = createButton(iframe);
 
-  addCloseEventListener(iframe);
+  addFrameEventListeners(iframe);
 
-  thisEl?.insertAdjacentElement("afterend", iframe);
-  thisEl?.insertAdjacentElement("beforebegin", button);
+  scriptEl?.insertAdjacentElement("afterend", iframe);
+  scriptEl?.insertAdjacentElement("beforebegin", button);
 }
 
 mount();
